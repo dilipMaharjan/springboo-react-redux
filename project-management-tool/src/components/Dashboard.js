@@ -1,24 +1,43 @@
-import React, { Component } from 'react'
-import CreateProjectButton from './Project/CreateProjectButton'
-import ProjectItem from './Project/ProjectItem'
+import React, { Component } from 'react';
+import CreateProjectButton from './Project/CreateProjectButton';
+import ProjectItem from './Project/ProjectItem';
+import { connect } from 'react-redux';
+import { getProjects } from '../actions/projectAction';
+import PropTypes from 'prop-types';
 
-export default class Dashboard extends Component {
-    render() {
-        return (
-            <div class="projects">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h1 class="display-4 text-center">Projects</h1>
-                            <br />
-                            <CreateProjectButton />
-                            <br />
-                            <hr />
-                            <ProjectItem />
-                        </div>
-                    </div>
-                </div>
+class Dashboard extends Component {
+  componentDidMount() {
+    this.props.getProjects();
+  }
+  render() {
+    const { projects } = this.props.projects;
+    return (
+      <div className='projects'>
+        <div className='container'>
+          <div className='row'>
+            <div className='col-md-12'>
+              <h1 className='display-4 text-center'>Projects</h1>
+              <br />
+              <CreateProjectButton />
+              <br />
+              <hr />
+              {projects.map(project => (
+                <ProjectItem key={project.id} project={project} />
+              ))}
             </div>
-        )
-    }
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
+
+Dashboard.propTypes = {
+  projects: PropTypes.array.isRequired,
+  getProjects: PropTypes.func.isRequired
+};
+const mapStateToProps = state => ({
+  projects: state.projects
+});
+
+export default connect(mapStateToProps, { getProjects })(Dashboard);
